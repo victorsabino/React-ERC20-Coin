@@ -1,0 +1,4 @@
+{
+  "solidity.defaultCompiler": "localNodeModule",
+  "solidity.compileUsingLocalVersion": "/Users/victorsabino/Documents/workspace/blockchain/react-dapp/soljson-v0.8.7+commit.e28d00a7.js"
+}
