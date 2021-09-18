@@ -1,22 +1,47 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
+import { ethers } from 'ethers'
+import Token from './artifacts/contracts/Token.sol/Token.json'
+
+const tokenAddress = "0xc74f87d141ED8A41c32ec3d6947485b6f4c11e49"
 
 function App() {
+  const [userAccount, setUserAccount] = useState()
+  const [amount, setAmount] = useState()
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+  }
+
+  async function getBalance() {
+    if (typeof window.ethereum !== 'undefined') {
+      const [account] = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(tokenAddress, Token.abi, provider)
+      const balance = await contract.balanceOf(account);
+      console.log("Balance: ", balance.toString());
+    }
+  }
+
+  async function sendCoins() {
+    if (typeof window.ethereum !== 'undefined') {
+      await requestAccount()
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(tokenAddress, Token.abi, signer);
+      const transation = await contract.transfer(userAccount, amount);
+      await transation.wait();
+      console.log(`${amount} Coins successfully sent to ${userAccount}`);
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <button onClick={getBalance}>Get Balance</button>
+        <button onClick={sendCoins}>Send Coins</button>
+        <input onChange={e => setUserAccount(e.target.value)} placeholder="Account ID" />
+        <input onChange={e => setAmount(e.target.value)} placeholder="Amount" />
       </header>
     </div>
   );
