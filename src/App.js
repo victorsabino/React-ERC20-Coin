@@ -10,6 +10,7 @@ function App() {
   const [userAccount, setUserAccount] = useState();
   const [amount, setAmount] = useState();
   const [error, setError] = useState();
+  const [balance, setBalance] = useState();
 
   async function requestAccount() {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -22,6 +23,7 @@ function App() {
       const contract = new ethers.Contract(tokenAddress, Token.abi, provider)
       const balance = await contract.balanceOf(account);
       console.log("Balance: ", balance.toString());
+      setBalance(balance.toString())
     }
   }
 
@@ -62,8 +64,13 @@ function App() {
         </div>
       </header>
       <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(null)}>
-        <Alert onClose={() => setError(null)} severity="success" sx={{ width: '100%' }}>
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
           {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={balance} autoHideDuration={6000} onClose={() => setBalance(null)}>
+        <Alert onClose={() => setBalance(null)} severity="success" sx={{ width: '100%' }}>
+          {balance}
         </Alert>
       </Snackbar>
     </div>
