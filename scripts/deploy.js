@@ -8,7 +8,7 @@ async function main() {
     deployer.address
   );
 
-  const Token = await hre.ethers.getContractFactory("Token");
+  const Token = await hre.ethers.getContractFactory("RCToken");
   const token = await Token.deploy();
 
   await token.deployed();
